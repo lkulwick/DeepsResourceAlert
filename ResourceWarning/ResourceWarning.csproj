@@ -65,9 +65,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Alert_LowResource.cs" />
     <Compile Include="HarmonyPatches.cs" />
     <Compile Include="Projectile_PlagueBullet.cs" />
-    <Compile Include="ResourceWarning.cs" />
+    <Compile Include="ResourceChecker.cs" />
+    <Compile Include="SetResourcesWindow.cs" />
+    <Compile Include="WindowAccessPatch.cs" />
     <Compile Include="YourLiking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
