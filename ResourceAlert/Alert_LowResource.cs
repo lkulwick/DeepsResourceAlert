@@ -6,7 +6,7 @@ using Verse;
 
 namespace ResourceAlert
 {
-    public class Alert_LowResource : Alert, IExposable
+    public class Alert_LowResource : Alert
     {
         public static Dictionary<ThingDef, int> alertableResources = new Dictionary<ThingDef, int>();
         public static HashSet<ThingDef> lowResources = new HashSet<ThingDef>();
@@ -41,10 +41,6 @@ namespace ResourceAlert
             //Log.Message("Alert_LowResource get report");
             return this.MapWithLowResource() != null;
         }
-
-
-
-
         private Map MapWithLowResource()
         {
             List<Map> maps = Find.Maps;
@@ -61,7 +57,6 @@ namespace ResourceAlert
             }
             return null;
         }
-
         public override string GetLabel()
         {
             return "Deep_ResourceAlert_Alert_LowResource".Translate();
@@ -83,7 +78,6 @@ namespace ResourceAlert
             }
             return foundLowResource;
         }
-
         private string CombinedLowResourcesString(Map map)
         {
             string lowResourcesString = "Deep_ResourceAlert_LowResourceDescGeneric".Translate();
@@ -94,13 +88,6 @@ namespace ResourceAlert
             }
             return lowResourcesString;
         }
-
-        public void ExposeData()
-        {
-            Log.Message("loading alertableresources");
-            Scribe_Collections.Look(ref alertableResources, "Deep_ResourceAlert_alertableResources", LookMode.Def, LookMode.Value);
-        }
-
     }
 
 }
