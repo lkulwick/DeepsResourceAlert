@@ -23,5 +23,6 @@
 <loadAfter>
     <li>brrainz.harmony</li>
 </loadAfter>
+<packageId>Deep.ResourceAlert</packageId>
   
 </ModMetaData>
