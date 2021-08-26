@@ -10,13 +10,13 @@ using Verse;
 
 namespace ResourceAlert
 {
-	[StaticConstructorOnStartup]
-	public static class HarmonyPatches
-	{
-		static HarmonyPatches()
-		{
-			Harmony harmony = new Harmony("Deep.ResourceWarning");
-			harmony.PatchAll();
-		}
-	}
+    [StaticConstructorOnStartup]
+    public static class HarmonyPatches
+    {
+        static HarmonyPatches()
+        {
+            Harmony harmony = new Harmony("Deep.ResourceWarning");
+            harmony.PatchAll();
+        }
+    }
 }
