@@ -9,7 +9,7 @@ using UnityEngine;
 using Verse;
 using Verse.Sound;
 
-namespace ResourceWarning
+namespace ResourceAlert
 {
 	public static class ResourceRightClick
 	{

@@ -8,7 +8,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace ResourceWarning
+namespace ResourceAlert
 {
 	[StaticConstructorOnStartup]
 	public static class HarmonyPatches

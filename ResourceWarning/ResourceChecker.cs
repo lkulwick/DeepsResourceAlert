@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Verse;
 
-namespace ResourceWarning
+namespace ResourceAlert
 {
     static class ResourceChecker
 	{
@@ -14,13 +14,13 @@ namespace ResourceWarning
 
         public static void AddAlertableResource(ThingDef resource, int alert_amount = 100)
         {
-			Log.Message("Add Alertable Resource: " + resource.defName + "amount: " + alert_amount);
+			Log.Message("Add Alertable Resource: " + resource.LabelCap + "amount: " + alert_amount);
 			if (resource != null)
             {
 				if (Alert_LowResource.alertableResources.ContainsKey(resource))
                 {
 					Alert_LowResource.alertableResources.Remove(resource);
-					Messages.Message("Deep_ResourceWarning_ResourceChecker_KeyReplaced".Translate(), MessageTypeDefOf.NeutralEvent);
+					Messages.Message("Deep_ResourceAlert_ResourceChecker_KeyReplaced".Translate(resource.LabelCap, alert_amount), MessageTypeDefOf.NeutralEvent);
 				}
 				Alert_LowResource.alertableResources.Add(resource, alert_amount);
 			}

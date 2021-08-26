@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
-namespace ResourceWarning
+namespace ResourceAlert
 {
 	public class Alert_LowResource : Alert, IExposable
 	{
@@ -14,7 +14,7 @@ namespace ResourceWarning
 		public Alert_LowResource()
 		{
 			//Log.Message("Alert_LowResource contructor called.");
-			this.defaultLabel = "LowResource".Translate();
+			this.defaultLabel = "Deep_ResourceAlert_Alert_LowResource".Translate();
 			this.defaultPriority = AlertPriority.Medium;
 			// TODO: populate dict with saved data
 		}
@@ -28,7 +28,7 @@ namespace ResourceWarning
 			}
 			string explaination = lowResources.Count == 0 ? "" : CombinedLowResourcesString(map);
 			return explaination;
-			//return "LowResourceDesc".Translate(resource.defName, available_resource_amount.ToString(), resource_limit.ToString());
+			//return "LowResourceDesc".Translate(resource.LabelCap, available_resource_amount.ToString(), resource_limit.ToString());
 		}
 
 		public override AlertReport GetReport()
@@ -64,7 +64,7 @@ namespace ResourceWarning
 
 		public override string GetLabel()
 		{
-			return "Deep_ResourceWarning_LowResources".Translate();
+			return "Deep_ResourceAlert_LowResources".Translate();
 		}
 
 		private bool PopulateLowResources(Map map)
@@ -86,11 +86,11 @@ namespace ResourceWarning
 
 		private string CombinedLowResourcesString(Map map)
         {
-			string lowResourcesString = "You are low on these resources:";
+			string lowResourcesString = "Deep_ResourceAlert_LowResourceDescGeneric".Translate();
 
 			foreach (ThingDef resource in lowResources)
 			{
-				lowResourcesString += "\n" + resource.defName + " - available: " + map.resourceCounter.GetCount(resource) + ", desired: " + alertableResources.TryGetValue(resource);
+				lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() + map.resourceCounter.GetCount(resource) + "Deep_ResourceAlert_LowResourceDescDesired".Translate() + alertableResources.TryGetValue(resource);
             }
 			return lowResourcesString;
         }
@@ -98,7 +98,7 @@ namespace ResourceWarning
         public void ExposeData()
 		{
 			Log.Message("loading alertableresources");
-			Scribe_Collections.Look(ref alertableResources, "Deep_ResourceWarning_alertableResources", LookMode.Def, LookMode.Value); 
+			Scribe_Collections.Look(ref alertableResources, "Deep_ResourceAlert_alertableResources", LookMode.Def, LookMode.Value); 
 		}
 			
     }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 
-namespace ResourceWarning
+namespace ResourceAlert
 {
 	[StaticConstructorOnStartup]
 	public class SetResourcesWindow: Window
@@ -106,15 +106,9 @@ namespace ResourceWarning
 			}
 		}
 
-		// Token: 0x040014DC RID: 5340
 		protected string curLimit = "0";
-
-		// Token: 0x040014DD RID: 5341
 		private bool focused_TextResourceLimitTextField;
-
-		// Token: 0x040014DE RID: 5342
 		private int startAcceptingInputAtFrame;
-
 		private ThingDef alertableResource;
 	}
 }

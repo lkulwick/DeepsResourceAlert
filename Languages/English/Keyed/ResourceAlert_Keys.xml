@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+    <Deep_ResourceAlert_ResourceChecker_KeyReplaced>Resource {0} desired value updated to {1}</Deep_ResourceAlert_ResourceChecker_KeyReplaced>
+    <Deep_ResourceAlert_Alert_LowResources>Low Resource</Deep_ResourceAlert_Alert_LowResources>
+	<Deep_ResourceAlert_LowResourceDescGeneric>Your stock is low on these resources:</Deep_ResourceAlert_LowResourceDescGeneric>
+	<Deep_ResourceAlert_LowResourceDescAvailable> - available:</Deep_ResourceAlert_LowResourceDescAvailable>
+	<Deep_ResourceAlert_LowResourceDescDesired>, desired: </Deep_ResourceAlert_LowResourceDescDesired>
+
+	
+</LanguageData>
