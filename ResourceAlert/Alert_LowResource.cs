@@ -66,7 +66,7 @@ namespace ResourceAlert
             lowResources.Clear();
             // TODO: instead of clear, manage hashset by adding and removing
             bool foundLowResource = false;
-            Log.Message("Alert_LowResource populate");
+            // Log.Message("Alert_LowResource populate");
             foreach (KeyValuePair<ThingDef, int> entry in alertableResources)
             {
                 if (map.resourceCounter.GetCount(entry.Key) < entry.Value)
