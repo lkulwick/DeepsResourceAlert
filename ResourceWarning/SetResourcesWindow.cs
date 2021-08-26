@@ -58,7 +58,6 @@ namespace ResourceWarning
 		}
 		public override void DoWindowContents(Rect inRect)
 		{
-			Log.Message("Do window contents");
 			Text.Font = GameFont.Small;
 			bool flag = false;
 			string TextFieldName = "TextField_SetResourceLimit";
@@ -84,43 +83,31 @@ namespace ResourceWarning
 			}
 			if (Widgets.ButtonText(new Rect(15f, inRect.height - 35f - 15f, inRect.width - 15f - 15f, 35f), "OK", true, true, true) || flag)
 			{
-				Log.Message("Acceptance report begin");
 				AcceptanceReport acceptanceReport = this.ValueIsValid(this.curLimit);
 				if (!acceptanceReport.Accepted)
 				{
-					if (acceptanceReport.Reason.NullOrEmpty())
-					{
-						Messages.Message("NameIsInvalid".Translate(), MessageTypeDefOf.RejectInput, false);
-						return;
-					}
 					Messages.Message(acceptanceReport.Reason, MessageTypeDefOf.RejectInput, false);
 					return;
 				}
-				Log.Message("Parse begin");
 				int alertResourceLimit = 0;
 				int.TryParse(curLimit, out alertResourceLimit);
-
-				Log.Message("alertResourcelimit: " + alertResourceLimit.ToString());
-
 				if (alertResourceLimit != 0)
                 {
 					ResourceChecker.AddAlertableResource(alertableResource, alertResourceLimit);
-					Messages.Message("Added resource " + alertableResource.defName, MessageTypeDefOf.NegativeEvent);
+					Messages.Message("Added resource " + alertableResource.defName, MessageTypeDefOf.PositiveEvent);
 				}
                 else
                 {
 					ResourceChecker.RemoveAlertableResource(alertableResource);
-					Messages.Message("Removed resource " + alertableResource.defName, MessageTypeDefOf.NegativeEvent);
+					Messages.Message("Removed resource " + alertableResource.defName, MessageTypeDefOf.PositiveEvent);
 				}
-				Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
-				Log.Message("accepted");
 				Find.WindowStack.TryRemove(this, true);
 
 			}
 		}
 
 		// Token: 0x040014DC RID: 5340
-		protected string curLimit = "default value";
+		protected string curLimit = "0";
 
 		// Token: 0x040014DD RID: 5341
 		private bool focused_TextResourceLimitTextField;

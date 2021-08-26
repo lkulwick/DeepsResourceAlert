@@ -11,7 +11,6 @@ using Verse.Sound;
 
 namespace ResourceWarning
 {
-	// Token: 0x02000022 RID: 34
 	public static class ResourceRightClick
 	{
 		public static bool open = true;
@@ -24,19 +23,15 @@ namespace ResourceWarning
 			{
 				if (Input.GetKey(KeyCode.RightControl) && Widgets.ButtonInvisible(rect, true))
 				{
-					Log.Message("deep test inside. Thingdef: " + node.Label + "Rect: " + rect.ToString());
-
-					Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
-
+					Log.Message("deep test inside category. Thingdef: " + node.Label + "Rect: " + rect.ToString());
+					//Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
 					if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
 					{
 						// Find.WindowStack.Add(new SetResourcesWindow(node.));
-						Messages.Message("Add category inside".Translate(), MessageTypeDefOf.NegativeEvent);
+						// Messages.Message("Add category inside".Translate(), MessageTypeDefOf.NegativeEvent);
 					}
 				}
 			}
-
-			// Token: 0x060001E5 RID: 485 RVA: 0x00012B4A File Offset: 0x00010D4A
 			private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 			{
 				bool found = false;
@@ -55,18 +50,13 @@ namespace ResourceWarning
 						yield return instruction;
 					}
 				}
-//				IEnumerator<CodeInstruction> enumerator = null;
 				if (!found)
 				{
 					Log.Warning("Patch_DoCategory Instruction not found");
 				}
 				yield break;
 			}
-
-			// Token: 0x040001C0 RID: 448
 			private static MethodInfo m_Clicker = AccessTools.Method(typeof(ResourceRightClick.Patch_DoCategory), "Clicker", null, null);
-
-			// Token: 0x040001C1 RID: 449
 			private static MethodInfo DrawTexture = AccessTools.Method(typeof(GUI), "DrawTexture", new Type[]
 			{
 				typeof(Rect),
@@ -74,29 +64,23 @@ namespace ResourceWarning
 			}, null);
 		}
 
-		// Token: 0x02000063 RID: 99
 		[HarmonyPatch(typeof(Listing_ResourceReadout), "DoThingDef")]
 		public static class Patch_DoThingDef
 		{
-			// Token: 0x060001E7 RID: 487 RVA: 0x00012BC0 File Offset: 0x00010DC0
 			private static void Clicker(ThingDef thingDef, Rect rect)
 			{
 				if (Input.GetKey(KeyCode.RightControl) && Widgets.ButtonInvisible(rect, true))
 				{
 					Log.Message("deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
-
-					Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
-
+					//Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
 					if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
 					{
 						Log.Message("windowstack add: " + thingDef.defName + "Rect: " + rect.ToString());
 						Find.WindowStack.Add(new SetResourcesWindow(thingDef));
 					}
 				}
-				Log.Message("Ended clicker");
 			}
 
-			// Token: 0x060001E8 RID: 488 RVA: 0x00012C47 File Offset: 0x00010E47
 			private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 			{
 				bool found = false;

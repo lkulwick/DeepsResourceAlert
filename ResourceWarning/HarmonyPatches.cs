@@ -15,8 +15,6 @@ namespace ResourceWarning
 	{
 		static HarmonyPatches()
 		{
-			Log.Message("test");
-			Log.Error("test2");
 			Harmony harmony = new Harmony("Deep.ResourceWarning");
 			harmony.PatchAll();
 		}

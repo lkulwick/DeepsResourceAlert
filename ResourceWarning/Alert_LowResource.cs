@@ -1,46 +1,51 @@
-﻿using System;
+﻿using RimWorld;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
-namespace RimWorld
+namespace ResourceWarning
 {
-	public class Alert_LowResource : Alert
+	public class Alert_LowResource : Alert, IExposable
 	{
+		public static Dictionary<ThingDef, int> alertableResources = new Dictionary<ThingDef, int>();
+		public static HashSet<ThingDef> lowResources = new HashSet<ThingDef>();
+
 		public Alert_LowResource()
 		{
-		}
-
-		public Alert_LowResource(ThingDef resource, int resource_limit)
-		{
+			//Log.Message("Alert_LowResource contructor called.");
 			this.defaultLabel = "LowResource".Translate();
 			this.defaultPriority = AlertPriority.Medium;
-			this.resource = resource;
-			this.resource_limit = resource_limit;
+			// TODO: populate dict with saved data
 		}
-
 
         public override TaggedString GetExplanation()
 		{
-			Map map = this.MapWithLowFood();
+			Map map = this.MapWithLowResource();
 			if (map == null)
 			{
 				return "";
 			}
-			int available_resource_amount = map.resourceCounter.GetCount(resource);
-			return "LowResourceDesc".Translate(resource.defName, available_resource_amount.ToString(), resource_limit.ToString());
+			string explaination = lowResources.Count == 0 ? "" : CombinedLowResourcesString(map);
+			return explaination;
+			//return "LowResourceDesc".Translate(resource.defName, available_resource_amount.ToString(), resource_limit.ToString());
 		}
 
 		public override AlertReport GetReport()
 		{
-			if (Find.TickManager.TicksGame < 150000)
-			{
-				return false;
-			}
-			return this.MapWithLowFood() != null;
+			//Log.Message("Alert_LowResource get report 1");
+			//if (Find.TickManager.TicksGame < 150000)
+			//{
+			//	return false;
+			//}
+			//Log.Message("Alert_LowResource get report");
+			return this.MapWithLowResource() != null;
 		}
 
-		private Map MapWithLowFood()
+
+
+
+		private Map MapWithLowResource()
 		{
 			List<Map> maps = Find.Maps;
 			for (int i = 0; i < maps.Count; i++)
@@ -48,10 +53,10 @@ namespace RimWorld
 				Map map = maps[i];
 				if (map.IsPlayerHome && map.mapPawns.AnyColonistSpawned)
 				{
-					if (map.resourceCounter.GetCount(resource) < resource_limit)
-					{
+                    if (this.PopulateLowResources(map))
+                    {
 						return map;
-					}
+                    }
 				}
 			}
 			return null;
@@ -62,8 +67,40 @@ namespace RimWorld
 			return "Deep_ResourceWarning_LowResources".Translate();
 		}
 
-		private ThingDef resource;
-		private int resource_limit;
-	}
+		private bool PopulateLowResources(Map map)
+        {
+			lowResources.Clear();
+			// TODO: instead of clear, manage hashset by adding and removing
+			bool foundLowResource = false;
+			Log.Message("Alert_LowResource populate");
+			foreach (KeyValuePair<ThingDef, int> entry in alertableResources)
+			{
+				if (map.resourceCounter.GetCount(entry.Key) < entry.Value)
+                {
+					lowResources.Add(entry.Key);
+					foundLowResource = true;
+                }
+			}
+			return foundLowResource;
+        }
+
+		private string CombinedLowResourcesString(Map map)
+        {
+			string lowResourcesString = "You are low on these resources:";
+
+			foreach (ThingDef resource in lowResources)
+			{
+				lowResourcesString += "\n" + resource.defName + " - available: " + map.resourceCounter.GetCount(resource) + ", desired: " + alertableResources.TryGetValue(resource);
+            }
+			return lowResourcesString;
+        }
+
+        public void ExposeData()
+		{
+			Log.Message("loading alertableresources");
+			Scribe_Collections.Look(ref alertableResources, "Deep_ResourceWarning_alertableResources", LookMode.Def, LookMode.Value); 
+		}
+			
+    }
 
 }
