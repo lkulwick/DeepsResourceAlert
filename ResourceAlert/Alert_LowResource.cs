@@ -64,7 +64,7 @@ namespace ResourceAlert
 
 		public override string GetLabel()
 		{
-			return "Deep_ResourceAlert_LowResources".Translate();
+			return "Deep_ResourceAlert_Alert_LowResource".Translate();
 		}
 
 		private bool PopulateLowResources(Map map)
