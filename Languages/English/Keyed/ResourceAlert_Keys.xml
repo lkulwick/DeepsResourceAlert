@@ -3,8 +3,8 @@
     <Deep_ResourceAlert_ResourceChecker_KeyReplaced>Resource {0} desired value updated to {1}</Deep_ResourceAlert_ResourceChecker_KeyReplaced>
     <Deep_ResourceAlert_Alert_LowResource>Low Resource</Deep_ResourceAlert_Alert_LowResource>
 	<Deep_ResourceAlert_LowResourceDescGeneric>Your stock is low on these resources:</Deep_ResourceAlert_LowResourceDescGeneric>
-	<Deep_ResourceAlert_LowResourceDescAvailable> - available:</Deep_ResourceAlert_LowResourceDescAvailable>
-	<Deep_ResourceAlert_LowResourceDescDesired>, desired: </Deep_ResourceAlert_LowResourceDescDesired>
+	<Deep_ResourceAlert_LowResourceDescAvailable> - available: </Deep_ResourceAlert_LowResourceDescAvailable>
+	<Deep_ResourceAlert_LowResourceDescDesired>/</Deep_ResourceAlert_LowResourceDescDesired>
 
 	
 </LanguageData>

@@ -81,7 +81,7 @@ namespace ResourceAlert
                 UI.FocusControl(TextFieldName, this);
                 this.focused_TextResourceLimitTextField = true;
             }
-            if (Widgets.ButtonText(new Rect(15f, inRect.height - 35f - 15f, inRect.width - 15f - 15f, 35f), "OK", true, true, true) || flag)
+            if (Widgets.ButtonText(new Rect(15f, inRect.height - 35f - 15f, inRect.width - 15f - 15f, 35f), "Set Alert", true, true, true) || flag)
             {
                 AcceptanceReport acceptanceReport = this.ValueIsValid(this.curLimit);
                 if (!acceptanceReport.Accepted)
@@ -94,12 +94,12 @@ namespace ResourceAlert
                 if (alertResourceLimit != 0)
                 {
                     ResourceChecker.AddAlertableResource(alertableResource, alertResourceLimit);
-                    Messages.Message("Added resource " + alertableResource.defName, MessageTypeDefOf.PositiveEvent);
+                    Messages.Message("Added resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
                 }
                 else
                 {
                     ResourceChecker.RemoveAlertableResource(alertableResource);
-                    Messages.Message("Removed resource " + alertableResource.defName, MessageTypeDefOf.PositiveEvent);
+                    Messages.Message("Removed resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
                 }
                 Find.WindowStack.TryRemove(this, true);
 

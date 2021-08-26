@@ -28,12 +28,11 @@ namespace ResourceAlert
             }
             string explaination = lowResources.Count == 0 ? "" : CombinedLowResourcesString(map);
             return explaination;
-            //return "LowResourceDesc".Translate(resource.LabelCap, available_resource_amount.ToString(), resource_limit.ToString());
         }
 
         public override AlertReport GetReport()
         {
-            //Log.Message("Alert_LowResource get report 1");
+            //TODO: Check the performance impact of this:
             //if (Find.TickManager.TicksGame < 150000)
             //{
             //	return false;
@@ -81,7 +80,6 @@ namespace ResourceAlert
         private string CombinedLowResourcesString(Map map)
         {
             string lowResourcesString = "Deep_ResourceAlert_LowResourceDescGeneric".Translate();
-
             foreach (ThingDef resource in lowResources)
             {
                 lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() + map.resourceCounter.GetCount(resource) + "Deep_ResourceAlert_LowResourceDescDesired".Translate() + alertableResources.TryGetValue(resource);

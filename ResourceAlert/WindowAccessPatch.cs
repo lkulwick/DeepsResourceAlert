@@ -23,7 +23,7 @@ namespace ResourceAlert
             {
                 if (Input.GetKey(KeyCode.RightControl) && Widgets.ButtonInvisible(rect, true))
                 {
-                    Log.Message("deep test inside category. Thingdef: " + node.Label + "Rect: " + rect.ToString());
+                    Log.Message("inside category. Thingdef: " + node.Label + "Rect: " + rect.ToString());
                     //Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
                     if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
                     {
@@ -69,7 +69,7 @@ namespace ResourceAlert
         {
             private static void Clicker(ThingDef thingDef, Rect rect)
             {
-                if (Input.GetKey(KeyCode.RightControl) && Widgets.ButtonInvisible(rect, true))
+                if (Widgets.ButtonInvisible(rect, true))
                 {
                     Log.Message("deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
                     //Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
