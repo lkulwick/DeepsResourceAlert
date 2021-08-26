@@ -43,6 +43,7 @@ namespace ResourceAlert
         private Map MapWithLowResource()
         {
             List<Map> maps = Find.Maps;
+            //TODO: make it work for every colony differently.
             for (int i = 0; i < maps.Count; i++)
             {
                 Map map = maps[i];
