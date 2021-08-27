@@ -21,7 +21,7 @@ namespace ResourceAlert
 
         public override TaggedString GetExplanation()
         {
-            Map map = this.MapWithLowResource();
+            Map map = Find.CurrentMap;
             if (map == null)
             {
                 return "";
@@ -38,25 +38,40 @@ namespace ResourceAlert
             //	return false;
             //}
             //Log.Message("Alert_LowResource get report");
-            return this.MapWithLowResource() != null;
+            return this.CheckMapResources(Find.CurrentMap) != null;
         }
-        private Map MapWithLowResource()
+
+        private Map CheckMapResources(Map map)
         {
-            List<Map> maps = Find.Maps;
-            //TODO: make it work for every colony differently.
-            for (int i = 0; i < maps.Count; i++)
+            if (map.IsPlayerHome && map.mapPawns.AnyColonistSpawned)
             {
-                Map map = maps[i];
-                if (map.IsPlayerHome && map.mapPawns.AnyColonistSpawned)
+                if (this.PopulateLowResources(map))
                 {
-                    if (this.PopulateLowResources(map))
-                    {
-                        return map;
-                    }
+                    return map;
                 }
             }
             return null;
         }
+
+
+        // Old Lookup for map with low resources. Its weird and unecessarily iterates through all maps.
+        //private Map MapWithLowResource()
+        //{
+        //    List<Map> maps = Find.Maps;
+        //    //TODO: make it work for every colony differently.
+        //    for (int i = 0; i < maps.Count; i++)
+        //    {
+        //        Map map = maps[i];
+        //        if (map.IsPlayerHome && map.mapPawns.AnyColonistSpawned)
+        //        {
+        //            if (this.PopulateLowResources(map))
+        //            {
+        //                return map;
+        //            }
+        //        }
+        //    }
+        //    return null;
+        //}
         public override string GetLabel()
         {
             return "Deep_ResourceAlert_Alert_LowResource".Translate();
