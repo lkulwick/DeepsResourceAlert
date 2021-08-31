@@ -69,7 +69,7 @@ namespace ResourceAlert
         {
             private static void Clicker(ThingDef thingDef, Rect rect)
             {
-                if (Widgets.ButtonInvisible(rect, true))
+                if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
                 {
                     Log.Message("deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
                     //Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
