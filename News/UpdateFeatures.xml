@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<HugsLib.UpdateFeatureDef Abstract="true" Name="UpdateFeatureBase">
+		<modNameReadable>Deep's Resource Alert</modNameReadable>
+		<modIdentifier>DeepsResourceAlert</modIdentifier>
+		<linkUrl>https://ludeon.com/forums/index.php?topic=55408.0</linkUrl>
+	</HugsLib.UpdateFeatureDef>
+	
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>DeepsResourceAlert_1_02</defName>
+		<assemblyVersion>1.02</assemblyVersion>
+		<content>Fixed Dubs Mint Menus compatibility. Replaced hotkey: |img:images/shiftclick|caption:Shift+Click on Resource Readout to set Alert Value.|</content>
+	</HugsLib.UpdateFeatureDef>
+	
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>DeepsResourceAlert_1_01</defName>
+		<assemblyVersion>1.01</assemblyVersion>
+		<content>Fixed solution for multiple colonies - now only resources on active map are counted.</content>
+	</HugsLib.UpdateFeatureDef>
+
+</Defs>

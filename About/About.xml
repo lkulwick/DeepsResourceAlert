@@ -22,6 +22,7 @@
 </modDependencies>
 <loadAfter>
     <li>brrainz.harmony</li>
+	<li>UnlimitedHugs.HugsLib</li>
 </loadAfter>
 <packageId>Deep.ResourceAlert</packageId>
   
