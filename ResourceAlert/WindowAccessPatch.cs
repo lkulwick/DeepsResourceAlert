@@ -19,16 +19,15 @@ namespace ResourceAlert
         [HarmonyPatch(typeof(Listing_ResourceReadout), "DoCategory")]
         public static class Patch_DoCategory
         {
-            private static void Clicker(TreeNode_ThingCategory node, Rect rect)
+            private static void Clicker(TreeNode_ThingCategory thingCategory, Rect rect)
             {
 				if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
 				{
-					Log.Message("new deep test inside category. Thingdef: " + node.catDef.defName + "Rect: " + rect.ToString());
-					//Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
+					Log.Message("new deep test inside category. Thingdef: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
 					if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
 					{
-						Log.Message("NOT YET IMPLMENTED windowstack add: " + node.catDef.defName + "Rect: " + rect.ToString());
-						//Find.WindowStack.Add(new SetResourcesWindow(node.catDef));
+						Log.Message("category windowstack add: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
+						Find.WindowStack.Add(new SetResourcesWindow(thingCategory.catDef));
 					}
 				}
 			}
@@ -72,7 +71,6 @@ namespace ResourceAlert
                 if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
                 {
                     Log.Message("new deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
-                    //Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
                     if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
                     {
                         Log.Message("windowstack add: " + thingDef.defName + "Rect: " + rect.ToString());

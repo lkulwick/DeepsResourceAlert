@@ -7,6 +7,12 @@
 	</HugsLib.UpdateFeatureDef>
 
 	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>DeepsResourceAlert_1_503</defName>
+		<assemblyVersion>1.5.03</assemblyVersion>
+		<content>Added option to set alert on category.</content>
+	</HugsLib.UpdateFeatureDef>
+	
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
 		<defName>DeepsResourceAlert_1_03</defName>
 		<assemblyVersion>1.02</assemblyVersion>
 		<content>Upgraded to Rimworld 1.5. |img:images/shiftclick|caption:Shift+Click on Resource Readout to set Alert Value.|</content>

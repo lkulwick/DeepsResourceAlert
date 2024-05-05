@@ -41,9 +41,27 @@ namespace ResourceAlert
             this.closeOnAccept = false;
             this.closeOnClickedOutside = true;
             this.alertableResource = resource;
+            this.alertableCategory = null;
 
-            Log.Message("windowstack contructor. res: " + resource.defName);
+            Log.Message("windowstack contructor resource . res: " + resource.defName);
         }
+
+		public SetResourcesWindow(ThingCategoryDef resource)
+		{
+			this.forcePause = false;
+			this.doCloseX = true;
+			this.absorbInputAroundWindow = true;
+			this.closeOnAccept = false;
+			this.closeOnClickedOutside = true;
+			this.alertableCategory = resource;
+            this.alertableResource = null;
+
+			Log.Message("windowstack contructor category .  res: " + resource.defName);
+		}
+
+
+
+
 		//public SetResourcesWindow(ThingCategoryDef resource)
 		//{
 		//	this.forcePause = false;
@@ -104,14 +122,38 @@ namespace ResourceAlert
                 int.TryParse(curLimit, out alertResourceLimit);
                 if (alertResourceLimit != 0)
                 {
-                    ResourceChecker.AddAlertableResource(alertableResource, alertResourceLimit);
-                    Messages.Message("Added resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
+                    if(alertableResource != null)
+                    {
+                        ResourceChecker.AddAlertableResource(alertableResource, alertResourceLimit);
+                        Messages.Message("Added resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
+                    }
+                    else if (alertableCategory != null)
+                    {
+						ResourceChecker.AddAlertableCategory(alertableCategory, alertResourceLimit);
+						Messages.Message("Added category " + alertableCategory.LabelCap, MessageTypeDefOf.PositiveEvent);
+					}
+                    else
+                    {
+                        Log.Error("Both alertables are null! Item is neither resource or category!");
+                    }
                 }
                 else
                 {
-                    ResourceChecker.RemoveAlertableResource(alertableResource);
-                    Messages.Message("Removed resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
-                }
+                    if (alertableResource != null)
+                    {
+                        ResourceChecker.RemoveAlertableResource(alertableResource);
+                        Messages.Message("Removed resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
+                    }
+					else if (alertableCategory != null)
+					{
+						ResourceChecker.RemoveAlertableCategory(alertableCategory);
+						Messages.Message("Removed category " + alertableCategory.LabelCap, MessageTypeDefOf.PositiveEvent);
+					}
+					else
+					{
+						Log.Error("Both alertables are null! Item is neither resource or category!");
+					}
+				}
                 Find.WindowStack.TryRemove(this, true);
 
             }
@@ -121,5 +163,6 @@ namespace ResourceAlert
         private bool focused_TextResourceLimitTextField;
         private int startAcceptingInputAtFrame;
         private ThingDef alertableResource;
+        private ThingCategoryDef alertableCategory;
     }
 }

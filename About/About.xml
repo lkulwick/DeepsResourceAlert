@@ -6,10 +6,11 @@
   <supportedVersions>
     <li>1.5</li>
   </supportedVersions>
-  <description>V1.03
-    This mod for Rimworld adds managable notify when resource amount in stock is lower than desired amount.
-	LeftShift+Click on a resource in Resource Readout (left side of the screen), then type a desired number.
-	If you wish to remove resource from watch list, just type in 0.
+  <description>V1.5.03
+This mod for RimWorld adds a manageable notification system that alerts players when the quantity of a resource or category in stock falls below a desired amount.
+
+To set a threshold, use LeftShift + Click on a resource or category in the Resource Readout (on the left side of the screen), and then enter the desired number.
+If you wish to remove a resource from the watch list, simply type in 0.
 	
   </description>
   <modDependencies>

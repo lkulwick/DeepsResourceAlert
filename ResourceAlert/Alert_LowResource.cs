@@ -9,15 +9,16 @@ namespace ResourceAlert
     public class Alert_LowResource : Alert
     {
         public static Dictionary<ThingDef, int> alertableResources = new Dictionary<ThingDef, int>();
-        public static HashSet<ThingDef> lowResources = new HashSet<ThingDef>();
+		public static Dictionary<ThingCategoryDef, int> alertableCategories = new Dictionary<ThingCategoryDef, int>();
+		public static HashSet<ThingDef> lowResources = new HashSet<ThingDef>();
+		public static HashSet<ThingCategoryDef> lowCategories = new HashSet<ThingCategoryDef>();
 
-        public Alert_LowResource()
+		public Alert_LowResource()
         {
-            //Log.Message("Alert_LowResource contructor called.");
+            Log.Message("Low Resources contructor");
             this.defaultLabel = "Deep_ResourceAlert_Alert_LowResource".Translate();
             this.defaultPriority = AlertPriority.Medium;
-            // TODO: populate dict with saved data
-        }
+		}
 
         public override TaggedString GetExplanation()
         {
@@ -26,7 +27,7 @@ namespace ResourceAlert
             {
                 return "";
             }
-            string explaination = lowResources.Count == 0 ? "" : CombinedLowResourcesString(map);
+            string explaination = (lowResources.Count + lowCategories.Count) == 0 ? "" : CombinedLowResourcesString(map);
             return explaination;
         }
 
@@ -53,25 +54,6 @@ namespace ResourceAlert
             return null;
         }
 
-
-        // Old Lookup for map with low resources. Its weird and unecessarily iterates through all maps.
-        //private Map MapWithLowResource()
-        //{
-        //    List<Map> maps = Find.Maps;
-        //    //TODO: make it work for every colony differently.
-        //    for (int i = 0; i < maps.Count; i++)
-        //    {
-        //        Map map = maps[i];
-        //        if (map.IsPlayerHome && map.mapPawns.AnyColonistSpawned)
-        //        {
-        //            if (this.PopulateLowResources(map))
-        //            {
-        //                return map;
-        //            }
-        //        }
-        //    }
-        //    return null;
-        //}
         public override string GetLabel()
         {
             return "Deep_ResourceAlert_Alert_LowResource".Translate();
@@ -79,9 +61,11 @@ namespace ResourceAlert
 
         private bool PopulateLowResources(Map map)
         {
+
             lowResources.Clear();
-            // TODO: instead of clear, manage hashset by adding and removing
-            bool foundLowResource = false;
+            lowCategories.Clear();
+			// TODO: instead of clear, manage hashset by adding and removing
+			bool foundLowResource = false;
             // Log.Message("Alert_LowResource populate");
             foreach (KeyValuePair<ThingDef, int> entry in alertableResources)
             {
@@ -91,7 +75,15 @@ namespace ResourceAlert
                     foundLowResource = true;
                 }
             }
-            return foundLowResource;
+			foreach (KeyValuePair<ThingCategoryDef, int> entry in alertableCategories)
+			{
+				if (map.resourceCounter.GetCountIn(entry.Key) < entry.Value)
+				{
+					lowCategories.Add(entry.Key);
+					foundLowResource = true;
+				}
+			}
+			return foundLowResource;
         }
         private string CombinedLowResourcesString(Map map)
         {
@@ -100,7 +92,11 @@ namespace ResourceAlert
             {
                 lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() + map.resourceCounter.GetCount(resource) + "Deep_ResourceAlert_LowResourceDescDesired".Translate() + alertableResources.TryGetValue(resource);
             }
-            return lowResourcesString;
+			foreach (ThingCategoryDef resource in lowCategories)
+			{
+				lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() + map.resourceCounter.GetCountIn(resource) + "Deep_ResourceAlert_LowResourceDescDesired".Translate() + alertableCategories.TryGetValue(resource);
+			}
+			return lowResourcesString;
         }
     }
 
