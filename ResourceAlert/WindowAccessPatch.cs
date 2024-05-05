@@ -21,17 +21,17 @@ namespace ResourceAlert
         {
             private static void Clicker(TreeNode_ThingCategory node, Rect rect)
             {
-                if (Input.GetKey(KeyCode.RightControl) && Widgets.ButtonInvisible(rect, true))
-                {
-                    Log.Message("inside category. Thingdef: " + node.Label + "Rect: " + rect.ToString());
-                    //Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
-                    if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
-                    {
-                        // Find.WindowStack.Add(new SetResourcesWindow(node.));
-                        // Messages.Message("Add category inside".Translate(), MessageTypeDefOf.NegativeEvent);
-                    }
-                }
-            }
+				if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
+				{
+					Log.Message("new deep test inside category. Thingdef: " + node.catDef.defName + "Rect: " + rect.ToString());
+					//Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
+					if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
+					{
+						Log.Message("NOT YET IMPLMENTED windowstack add: " + node.catDef.defName + "Rect: " + rect.ToString());
+						//Find.WindowStack.Add(new SetResourcesWindow(node.catDef));
+					}
+				}
+			}
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 bool found = false;
@@ -71,7 +71,7 @@ namespace ResourceAlert
             {
                 if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
                 {
-                    Log.Message("deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
+                    Log.Message("new deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
                     //Messages.Message("Deep_ResourceWarning_DebugMessage".Translate(), MessageTypeDefOf.NegativeEvent);
                     if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
                     {

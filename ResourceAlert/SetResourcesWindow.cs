@@ -44,7 +44,18 @@ namespace ResourceAlert
 
             Log.Message("windowstack contructor. res: " + resource.defName);
         }
-        public void WasOpenedByHotkey()
+		//public SetResourcesWindow(ThingCategoryDef resource)
+		//{
+		//	this.forcePause = false;
+		//	this.doCloseX = true;
+		//	this.absorbInputAroundWindow = true;
+		//	this.closeOnAccept = false;
+		//	this.closeOnClickedOutside = true;
+		//	this.alertableResource = resource;
+
+		//	Log.Message("windowstack contructor. res: " + resource.defName);
+		//}
+		public void WasOpenedByHotkey()
         {
             this.startAcceptingInputAtFrame = Time.frameCount + 1;
         }

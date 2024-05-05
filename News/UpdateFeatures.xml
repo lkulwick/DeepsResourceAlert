@@ -5,6 +5,12 @@
 		<modIdentifier>DeepsResourceAlert</modIdentifier>
 		<linkUrl>https://ludeon.com/forums/index.php?topic=55408.0</linkUrl>
 	</HugsLib.UpdateFeatureDef>
+
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>DeepsResourceAlert_1_03</defName>
+		<assemblyVersion>1.02</assemblyVersion>
+		<content>Upgraded to Rimworld 1.5. |img:images/shiftclick|caption:Shift+Click on Resource Readout to set Alert Value.|</content>
+	</HugsLib.UpdateFeatureDef>
 	
 	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
 		<defName>DeepsResourceAlert_1_02</defName>
