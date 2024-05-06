@@ -5,8 +5,9 @@
   <url>https://github.com/lkulwick/DeepsResourceAlert</url>
   <supportedVersions>
     <li>1.5</li>
+    <li>1.3</li>
   </supportedVersions>
-  <description>V1.5.03
+  <description>V1.5.04
 This mod for RimWorld adds a manageable notification system that alerts players when the quantity of a resource or category in stock falls below a desired amount.
 
 To set a threshold, use LeftShift + Click on a resource or category in the Resource Readout (on the left side of the screen), and then enter the desired number.
