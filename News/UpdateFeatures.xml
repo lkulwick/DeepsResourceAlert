@@ -8,6 +8,12 @@
 
 	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
 		<defName>DeepsResourceAlert_1_503</defName>
+		<assemblyVersion>1.6.00</assemblyVersion>
+		<content>Updated to 1.6.</content>
+	</HugsLib.UpdateFeatureDef>
+
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+		<defName>DeepsResourceAlert_1_503</defName>
 		<assemblyVersion>1.5.03</assemblyVersion>
 		<content>Added option to set alert on category.</content>
 	</HugsLib.UpdateFeatureDef>
