@@ -2,6 +2,7 @@
 using UnityEngine;
 using Verse;
 using RimWorld;
+using Verse.Sound;
 
 namespace ResourceAlert
 {
@@ -40,13 +41,19 @@ namespace ResourceAlert
             return "Deep Resource Alert";
         }
 
-        public override void DoSettingsWindowContents(Rect inRect)
-        {
-            Listing_Standard listing = new Listing_Standard();
-            listing.Begin(inRect);
+		public override void DoSettingsWindowContents(Rect inRect)
+		{
+			Listing_Standard listing = new Listing_Standard();
+			listing.Begin(inRect);
 
-            if (listing.ButtonText("Show Tracked Resources"))
-                Find.WindowStack.Add(new TrackedResourcesWindow());
-        }
-    }
+			if (listing.ButtonText("Show Tracked Resources"))
+			{
+				SoundDefOf.Click.PlayOneShot(SoundInfo.OnCamera());
+				Find.WindowStack.Add(new TrackedResourcesWindow());
+			}
+
+			listing.End();
+		}
+
+	}
 }
