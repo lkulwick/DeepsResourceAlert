@@ -75,10 +75,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alert_LowResource.cs" />
+    <Compile Include="ResourceAlertMod.cs" />
     <Compile Include="ResourceAlertSettings.cs" />
     <Compile Include="HarmonyPatches.cs" />
     <Compile Include="ResourceChecker.cs" />
     <Compile Include="SetResourcesWindow.cs" />
+    <Compile Include="TrackedResourcesWindow.cs" />
     <Compile Include="WindowAccessPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

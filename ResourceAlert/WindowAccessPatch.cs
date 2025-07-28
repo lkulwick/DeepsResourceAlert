@@ -21,16 +21,16 @@ namespace ResourceAlert
         {
             private static void Clicker(TreeNode_ThingCategory thingCategory, Rect rect)
             {
-				if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
-				{
-					Log.Message("new deep test inside category. Thingdef: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
-					if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
-					{
-						Log.Message("category windowstack add: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
-						Find.WindowStack.Add(new SetResourcesWindow(thingCategory.catDef));
-					}
-				}
-			}
+                if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
+                {
+                    Log.Message("new deep test inside category. Thingdef: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
+                    if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
+                    {
+                        Log.Message("category windowstack add: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
+                        Find.WindowStack.Add(new SetResourcesWindow(thingCategory.catDef));
+                    }
+                }
+            }
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 bool found = false;

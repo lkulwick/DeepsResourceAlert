@@ -9,16 +9,22 @@ namespace ResourceAlert
     public class Alert_LowResource : Alert
     {
         public static Dictionary<ThingDef, int> alertableResources = new Dictionary<ThingDef, int>();
-		public static Dictionary<ThingCategoryDef, int> alertableCategories = new Dictionary<ThingCategoryDef, int>();
-		public static HashSet<ThingDef> lowResources = new HashSet<ThingDef>();
-		public static HashSet<ThingCategoryDef> lowCategories = new HashSet<ThingCategoryDef>();
+        public static Dictionary<ThingCategoryDef, int> alertableCategories = new Dictionary<ThingCategoryDef, int>();
 
-		public Alert_LowResource()
+        // 
+        //public static Dictionary<ThingDef, int> criticalResources = new Dictionary<ThingDef, int>();
+        //public static Dictionary<ThingCategoryDef, int> criticalCategories = new Dictionary<ThingCategoryDef, int>();
+
+
+        public static HashSet<ThingDef> lowResources = new HashSet<ThingDef>();
+        public static HashSet<ThingCategoryDef> lowCategories = new HashSet<ThingCategoryDef>();
+
+        public Alert_LowResource()
         {
             Log.Message("Low Resources contructor");
             this.defaultLabel = "Deep_ResourceAlert_Alert_LowResource".Translate();
             this.defaultPriority = AlertPriority.Medium;
-		}
+        }
 
         public override TaggedString GetExplanation()
         {
@@ -64,8 +70,8 @@ namespace ResourceAlert
 
             lowResources.Clear();
             lowCategories.Clear();
-			// TODO: instead of clear, manage hashset by adding and removing
-			bool foundLowResource = false;
+            // TODO: instead of clear, manage hashset by adding and removing
+            bool foundLowResource = false;
             // Log.Message("Alert_LowResource populate");
             foreach (KeyValuePair<ThingDef, int> entry in alertableResources)
             {
@@ -75,15 +81,15 @@ namespace ResourceAlert
                     foundLowResource = true;
                 }
             }
-			foreach (KeyValuePair<ThingCategoryDef, int> entry in alertableCategories)
-			{
-				if (map.resourceCounter.GetCountIn(entry.Key) < entry.Value)
-				{
-					lowCategories.Add(entry.Key);
-					foundLowResource = true;
-				}
-			}
-			return foundLowResource;
+            foreach (KeyValuePair<ThingCategoryDef, int> entry in alertableCategories)
+            {
+                if (map.resourceCounter.GetCountIn(entry.Key) < entry.Value)
+                {
+                    lowCategories.Add(entry.Key);
+                    foundLowResource = true;
+                }
+            }
+            return foundLowResource;
         }
         private string CombinedLowResourcesString(Map map)
         {
@@ -92,11 +98,11 @@ namespace ResourceAlert
             {
                 lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() + map.resourceCounter.GetCount(resource) + "Deep_ResourceAlert_LowResourceDescDesired".Translate() + alertableResources.TryGetValue(resource);
             }
-			foreach (ThingCategoryDef resource in lowCategories)
-			{
-				lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() + map.resourceCounter.GetCountIn(resource) + "Deep_ResourceAlert_LowResourceDescDesired".Translate() + alertableCategories.TryGetValue(resource);
-			}
-			return lowResourcesString;
+            foreach (ThingCategoryDef resource in lowCategories)
+            {
+                lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() + map.resourceCounter.GetCountIn(resource) + "Deep_ResourceAlert_LowResourceDescDesired".Translate() + alertableCategories.TryGetValue(resource);
+            }
+            return lowResourcesString;
         }
     }
 

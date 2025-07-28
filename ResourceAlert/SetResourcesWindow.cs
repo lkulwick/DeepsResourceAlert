@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
+using Verse.Sound;
 
 namespace ResourceAlert
 {
@@ -26,54 +27,62 @@ namespace ResourceAlert
                 return 28;
             }
         }
-        public override Vector2 InitialSize
-        {
-            get
-            {
-                return new Vector2(280f, 175f);
-            }
-        }
+        public override Vector2 InitialSize => new Vector2(340f, 220f);
+
+
+
         public SetResourcesWindow(ThingDef resource)
+        {
+            this.alertableResource = resource;
+            this.alertableCategory = null;
+            InitWindow();
+
+            if (resource != null && Alert_LowResource.alertableResources.TryGetValue(resource, out var value))
+                curLimit = value.ToString();
+            else
+                curLimit = "0";
+
+            Log.Message("windowstack constructor resource: " + resource.defName);
+        }
+
+        public SetResourcesWindow(ThingCategoryDef category)
+        {
+            this.alertableCategory = category;
+            this.alertableResource = null;
+            InitWindow();
+
+            if (category != null && Alert_LowResource.alertableCategories.TryGetValue(category, out var value))
+                curLimit = value.ToString();
+            else
+                curLimit = "0";
+
+            Log.Message("windowstack constructor category: " + category.defName);
+        }
+
+        private void InitWindow()
         {
             this.forcePause = false;
             this.doCloseX = true;
             this.absorbInputAroundWindow = true;
             this.closeOnAccept = false;
             this.closeOnClickedOutside = true;
-            this.alertableResource = resource;
-            this.alertableCategory = null;
-
-            Log.Message("windowstack contructor resource . res: " + resource.defName);
         }
 
-		public SetResourcesWindow(ThingCategoryDef resource)
-		{
-			this.forcePause = false;
-			this.doCloseX = true;
-			this.absorbInputAroundWindow = true;
-			this.closeOnAccept = false;
-			this.closeOnClickedOutside = true;
-			this.alertableCategory = resource;
-            this.alertableResource = null;
-
-			Log.Message("windowstack contructor category .  res: " + resource.defName);
-		}
 
 
 
+        //public SetResourcesWindow(ThingCategoryDef resource)
+        //{
+        //	this.forcePause = false;
+        //	this.doCloseX = true;
+        //	this.absorbInputAroundWindow = true;
+        //	this.closeOnAccept = false;
+        //	this.closeOnClickedOutside = true;
+        //	this.alertableResource = resource;
 
-		//public SetResourcesWindow(ThingCategoryDef resource)
-		//{
-		//	this.forcePause = false;
-		//	this.doCloseX = true;
-		//	this.absorbInputAroundWindow = true;
-		//	this.closeOnAccept = false;
-		//	this.closeOnClickedOutside = true;
-		//	this.alertableResource = resource;
-
-		//	Log.Message("windowstack contructor. res: " + resource.defName);
-		//}
-		public void WasOpenedByHotkey()
+        //	Log.Message("windowstack contructor. res: " + resource.defName);
+        //}
+        public void WasOpenedByHotkey()
         {
             this.startAcceptingInputAtFrame = Time.frameCount + 1;
         }
@@ -85,79 +94,142 @@ namespace ResourceAlert
             }
             return true;
         }
+
+
         public override void DoWindowContents(Rect inRect)
         {
+            float curY = 0f;
+            float spacing = 10f;
+
+            // --- "Track resource:" title ---
+            Text.Font = GameFont.Medium;
+            string prefix = "Track resource:";
+            Vector2 prefixSize = Text.CalcSize(prefix);
+
+            Texture iconTex = alertableResource?.uiIcon ?? alertableCategory?.icon ?? BaseContent.BadTex;
+            float iconSize = 24f;
+            float titleLineHeight = Mathf.Max(prefixSize.y, iconSize);
+            float totalWidth = prefixSize.x + 6f + iconSize;
+            float x = (inRect.width - totalWidth) / 2f;
+            float centerY = titleLineHeight / 2f;
+
+            Rect prefixRect = new Rect(x, 0f + centerY - prefixSize.y / 2f, prefixSize.x, prefixSize.y);
+            Rect iconRect = new Rect(prefixRect.xMax + 6f, 0f + centerY - iconSize / 2f, iconSize, iconSize);
+
+            // Draw prefix and icon
+            Widgets.Label(prefixRect, prefix);
+            GUI.DrawTexture(iconRect, iconTex);
+
+            // Tooltip with full name
+            string label = alertableResource?.LabelCap ?? alertableCategory?.LabelCap ?? "???";
+            TooltipHandler.TipRegion(iconRect, label);
+
+            curY += titleLineHeight + spacing;
             Text.Font = GameFont.Small;
-            bool flag = false;
-            string TextFieldName = "TextField_SetResourceLimit";
+
+
+
+            // --- Input field (same width as button) ---
+            float controlWidth = inRect.width - 30f;
+            Rect textFieldRect = new Rect(15f, curY, controlWidth, 30f);
+            GUI.SetNextControlName("TextField_SetResourceLimit");
+
+            string newText = Widgets.TextField(textFieldRect, curLimit);
+            if (AcceptsInput && newText.Length < MaxCountLength)
+                curLimit = newText;
+            else if (!AcceptsInput)
+                ((TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl)).SelectAll();
+
+            if (!focused_TextResourceLimitTextField)
+            {
+                UI.FocusControl("TextField_SetResourceLimit", this);
+                focused_TextResourceLimitTextField = true;
+            }
+
+            curY += 30f + spacing;
+
+            // --- Track button (was: Set Alert) ---
+            float buttonHeight = 35f;
+            Rect buttonRect = new Rect(15f, curY, controlWidth, buttonHeight);
+            bool pressed = Widgets.ButtonText(buttonRect, "Track");
+
             if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return)
             {
-                flag = true;
                 Event.current.Use();
+                pressed = true;
             }
-            GUI.SetNextControlName(TextFieldName);
-            string text = Widgets.TextField(new Rect(0f, 15f, inRect.width, 35f), this.curLimit);
-            if (this.AcceptsInput && text.Length < this.MaxCountLength)
+
+
+            if (pressed)
             {
-                this.curLimit = text;
-            }
-            else if (!this.AcceptsInput)
-            {
-                ((TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl)).SelectAll();
-            }
-            if (!this.focused_TextResourceLimitTextField)
-            {
-                UI.FocusControl(TextFieldName, this);
-                this.focused_TextResourceLimitTextField = true;
-            }
-            if (Widgets.ButtonText(new Rect(15f, inRect.height - 35f - 15f, inRect.width - 15f - 15f, 35f), "Set Alert", true, true, true) || flag)
-            {
-                AcceptanceReport acceptanceReport = this.ValueIsValid(this.curLimit);
+                AcceptanceReport acceptanceReport = ValueIsValid(curLimit);
                 if (!acceptanceReport.Accepted)
                 {
                     Messages.Message(acceptanceReport.Reason, MessageTypeDefOf.RejectInput, false);
                     return;
                 }
-                int alertResourceLimit = 0;
-                int.TryParse(curLimit, out alertResourceLimit);
-                if (alertResourceLimit != 0)
+
+                if (int.TryParse(curLimit, out int limit))
                 {
-                    if(alertableResource != null)
+                    if (limit != 0)
                     {
-                        ResourceChecker.AddAlertableResource(alertableResource, alertResourceLimit);
-                        Messages.Message("Added resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
+                        if (alertableResource != null)
+                        {
+                            ResourceChecker.AddAlertableResource(alertableResource, limit);
+                            Messages.Message("Added resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
+                        }
+                        else if (alertableCategory != null)
+                        {
+                            ResourceChecker.AddAlertableCategory(alertableCategory, limit);
+                            Messages.Message("Added category " + alertableCategory.LabelCap, MessageTypeDefOf.PositiveEvent);
+                        }
                     }
-                    else if (alertableCategory != null)
-                    {
-						ResourceChecker.AddAlertableCategory(alertableCategory, alertResourceLimit);
-						Messages.Message("Added category " + alertableCategory.LabelCap, MessageTypeDefOf.PositiveEvent);
-					}
                     else
                     {
-                        Log.Error("Both alertables are null! Item is neither resource or category!");
+                        if (alertableResource != null)
+                        {
+                            ResourceChecker.RemoveAlertableResource(alertableResource);
+                            Messages.Message("Removed resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
+                        }
+                        else if (alertableCategory != null)
+                        {
+                            ResourceChecker.RemoveAlertableCategory(alertableCategory);
+                            Messages.Message("Removed category " + alertableCategory.LabelCap, MessageTypeDefOf.PositiveEvent);
+                        }
                     }
-                }
-                else
-                {
-                    if (alertableResource != null)
-                    {
-                        ResourceChecker.RemoveAlertableResource(alertableResource);
-                        Messages.Message("Removed resource " + alertableResource.LabelCap, MessageTypeDefOf.PositiveEvent);
-                    }
-					else if (alertableCategory != null)
-					{
-						ResourceChecker.RemoveAlertableCategory(alertableCategory);
-						Messages.Message("Removed category " + alertableCategory.LabelCap, MessageTypeDefOf.PositiveEvent);
-					}
-					else
-					{
-						Log.Error("Both alertables are null! Item is neither resource or category!");
-					}
-				}
-                Find.WindowStack.TryRemove(this, true);
 
+                    Find.WindowStack.TryRemove(this, true);
+                }
+            }
+
+            // --- Show Tracked List link ---
+            Vector2 linkSize = Text.CalcSize("Show Tracked List");
+            float margin = 10f;
+            Rect linkRect = new Rect(
+                inRect.width - linkSize.x - margin,
+                inRect.height - linkSize.y - margin,
+                linkSize.x,
+                linkSize.y
+            );
+
+            GUI.color = new Color(0.6f, 0.6f, 1f); // light blue
+            Widgets.Label(linkRect, "Show Tracked List");
+            GUI.color = Color.white;
+
+            if (Widgets.ButtonInvisible(linkRect, true))
+            {
+                SoundDefOf.Click.PlayOneShotOnCamera();
+                Find.WindowStack.Add(new TrackedResourcesWindow());
+            }
+
+            if (Mouse.IsOver(linkRect))
+            {
+                Widgets.DrawLineHorizontal(linkRect.x, linkRect.yMax, linkRect.width);
+                GUI.DrawTexture(linkRect, TexUI.HighlightTex);
             }
         }
+
+
 
         protected string curLimit = "0";
         private bool focused_TextResourceLimitTextField;
