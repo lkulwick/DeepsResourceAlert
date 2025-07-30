@@ -9,13 +9,13 @@
 		<defName>DeepsResourceAlert_1_61</defName>
 		<assemblyVersion>1.6.1</assemblyVersion>
 		<content>
-		Improved UI: cleaner design, consistent styling. | 
-		New Tracked Resources summary window: edit or remove tracked items, even if not present on the map. | 
-		Set value window now pre-fills current threshold. |img:images/tracksummary|caption:Click to edit tracked values.|
+			Improved UI: cleaner design, consistent styling. 
+			New Tracked Resources summary window: edit or remove tracked items, even if not present on the map. 
+			Set value window now pre-fills current threshold.
 		</content>
 	</HugsLib.UpdateFeatureDef>
 	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
-		<defName>DeepsResourceAlert_1_503</defName>
+		<defName>DeepsResourceAlert_1_60</defName>
 		<assemblyVersion>1.6.00</assemblyVersion>
 		<content>Updated to 1.6.</content>
 	</HugsLib.UpdateFeatureDef>
