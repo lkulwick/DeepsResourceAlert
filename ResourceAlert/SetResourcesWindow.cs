@@ -37,12 +37,12 @@ namespace ResourceAlert
             this.alertableCategory = null;
             InitWindow();
 
-            if (resource != null && Alert_LowResource.alertableResources.TryGetValue(resource, out var value))
+            if (resource != null && ResourceAlertManager.Resources.TryGetValue(resource, out var value))
                 curLimit = value.ToString();
             else
                 curLimit = "0";
 
-            Log.Message("windowstack constructor resource: " + resource.defName);
+            DebugLog.Message("windowstack constructor resource: " + resource.defName);
         }
 
         public SetResourcesWindow(ThingCategoryDef category)
@@ -51,12 +51,12 @@ namespace ResourceAlert
             this.alertableResource = null;
             InitWindow();
 
-            if (category != null && Alert_LowResource.alertableCategories.TryGetValue(category, out var value))
+            if (category != null && ResourceAlertManager.Categories.TryGetValue(category, out var value))
                 curLimit = value.ToString();
             else
                 curLimit = "0";
 
-            Log.Message("windowstack constructor category: " + category.defName);
+            DebugLog.Message("windowstack constructor category: " + category.defName);
         }
 
         private void InitWindow()
@@ -80,7 +80,7 @@ namespace ResourceAlert
         //	this.closeOnClickedOutside = true;
         //	this.alertableResource = resource;
 
-        //	Log.Message("windowstack contructor. res: " + resource.defName);
+        //	DebugLog.Message("windowstack contructor. res: " + resource.defName);
         //}
         public void WasOpenedByHotkey()
         {

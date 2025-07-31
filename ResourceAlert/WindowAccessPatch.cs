@@ -23,10 +23,10 @@ namespace ResourceAlert
             {
                 if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
                 {
-                    Log.Message("new deep test inside category. Thingdef: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
+                    DebugLog.Message("new deep test inside category. Thingdef: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
                     if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
                     {
-                        Log.Message("category windowstack add: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
+                        DebugLog.Message("category windowstack add: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
                         Find.WindowStack.Add(new SetResourcesWindow(thingCategory.catDef));
                     }
                 }
@@ -70,10 +70,10 @@ namespace ResourceAlert
             {
                 if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
                 {
-                    Log.Message("new deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
+                    DebugLog.Message("new deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
                     if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
                     {
-                        Log.Message("windowstack add: " + thingDef.defName + "Rect: " + rect.ToString());
+                        DebugLog.Message("windowstack add: " + thingDef.defName + "Rect: " + rect.ToString());
                         Find.WindowStack.Add(new SetResourcesWindow(thingDef));
                     }
                 }

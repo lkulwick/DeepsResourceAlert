@@ -65,33 +65,44 @@ namespace ResourceAlert
 				}
 			}
 
-			// Resources
-			if (Alert_LowResource.alertableResources.Count > 0)
+
+			if (Find.CurrentMap != null)
 			{
-				Widgets.Label(new Rect(10f, curY, 200f, 24f), "Resources:");
+				Dictionary<ThingDef, int> alertableResources = ResourceAlertManager.Resources;
+				Dictionary<ThingCategoryDef, int> alertableCategories = ResourceAlertManager.Categories;
+
+				// Resources
+				if (alertableResources.Count > 0)
+				{
+					Widgets.Label(new Rect(10f, curY, 200f, 24f), "Resources:");
+					curY += 24f;
+				}
+
+				DrawTracked(
+					alertableResources,
+					def => Find.WindowStack.Add(new SetResourcesWindow((ThingDef)(object)def)),
+					def => ResourceChecker.RemoveAlertableResource((ThingDef)(object)def)
+				);
+
+				// Categories
+				if (alertableCategories.Count > 0)
+				{
+					curY += 10f;
+					Widgets.Label(new Rect(10f, curY, 200f, 24f), "Categories:");
+					curY += 24f;
+				}
+
+				DrawTracked(
+					alertableCategories,
+					def => Find.WindowStack.Add(new SetResourcesWindow((ThingCategoryDef)(object)def)),
+					def => ResourceChecker.RemoveAlertableCategory((ThingCategoryDef)(object)def)
+				);
+			}
+			else
+			{
+				Widgets.Label(new Rect(10f, curY, 200f, 24f), "Load a map first.");
 				curY += 24f;
 			}
-
-			DrawTracked(
-				Alert_LowResource.alertableResources,
-				def => Find.WindowStack.Add(new SetResourcesWindow((ThingDef)(object)def)),
-				def => ResourceChecker.RemoveAlertableResource((ThingDef)(object)def)
-			);
-
-			// Categories
-			if (Alert_LowResource.alertableCategories.Count > 0)
-			{
-				curY += 10f;
-				Widgets.Label(new Rect(10f, curY, 200f, 24f), "Categories:");
-				curY += 24f;
-			}
-
-			DrawTracked(
-				Alert_LowResource.alertableCategories,
-				def => Find.WindowStack.Add(new SetResourcesWindow((ThingCategoryDef)(object)def)),
-				def => ResourceChecker.RemoveAlertableCategory((ThingCategoryDef)(object)def)
-			);
-
 			// Close button (optional, but elegant)
 			if (Widgets.ButtonText(new Rect(inRect.width - 80f, inRect.height - 35f, 70f, 28f), "Close"))
 				Close();

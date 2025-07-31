@@ -6,34 +6,40 @@ using Verse.Sound;
 
 namespace ResourceAlert
 {
-    public class ResourceAlertModSettings : ModSettings
-    {
-        public override void ExposeData()
-        {
-            base.ExposeData();
-            Scribe_Collections.Look(
-                ref Alert_LowResource.alertableResources,
-                "Deep_ResourceAlert_alertableResources",
-                LookMode.Def, LookMode.Value);
-            Scribe_Collections.Look(
-                ref Alert_LowResource.alertableCategories,
-                "Deep_ResourceAlert_alertableCategories",
-                LookMode.Def, LookMode.Value);
+	//public class DefaultAlertSettings : ModSettings
+	//{
+	//	// default per-map thresholds, keyed by ThingDef
+	//	public Dictionary<ThingDef, int> defaultResourceThresholds
+	//		= new Dictionary<ThingDef, int>();
 
-            if (Alert_LowResource.alertableResources == null)
-                Alert_LowResource.alertableResources = new Dictionary<ThingDef, int>();
-            if (Alert_LowResource.alertableCategories == null)
-                Alert_LowResource.alertableCategories = new Dictionary<ThingCategoryDef, int>();
-        }
-    }
+	//	// default per-map thresholds, keyed by ThingCategoryDef
+	//	public Dictionary<ThingCategoryDef, int> defaultCategoryThresholds
+	//		= new Dictionary<ThingCategoryDef, int>();
 
-    public class ResourceAlertMod : Mod
+	//	public override void ExposeData()
+	//	{
+	//		base.ExposeData();
+	//		// Scribe out those two dictionaries
+	//		Scribe_Collections.Look(
+	//			ref defaultResourceThresholds,
+	//			"defaultResourceThresholds",
+	//			LookMode.Def,   // key is a Def
+	//			LookMode.Value  // value is an int
+	//		);
+	//		Scribe_Collections.Look(
+	//			ref defaultCategoryThresholds,
+	//			"defaultCategoryThresholds",
+	//			LookMode.Def,
+	//			LookMode.Value
+	//		);
+	//	}
+	//}
+
+	public class ResourceAlertMod : Mod
     {
-        private ResourceAlertModSettings settings;
 
         public ResourceAlertMod(ModContentPack content) : base(content)
         {
-            this.settings = GetSettings<ResourceAlertModSettings>();
         }
 
         public override string SettingsCategory()
@@ -45,6 +51,7 @@ namespace ResourceAlert
 		{
 			Listing_Standard listing = new Listing_Standard();
 			listing.Begin(inRect);
+
 
 			if (listing.ButtonText("Show Tracked Resources"))
 			{

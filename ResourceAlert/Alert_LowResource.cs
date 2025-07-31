@@ -8,8 +8,9 @@ namespace ResourceAlert
 {
     public class Alert_LowResource : Alert
     {
-        public static Dictionary<ThingDef, int> alertableResources = new Dictionary<ThingDef, int>();
-        public static Dictionary<ThingCategoryDef, int> alertableCategories = new Dictionary<ThingCategoryDef, int>();
+        //public static Dictionary<ThingDef, int> alertableResources = new Dictionary<ThingDef, int>();
+        //public static Dictionary<ThingCategoryDef, int> alertableCategories = new Dictionary<ThingCategoryDef, int>();
+
 
         // 
         //public static Dictionary<ThingDef, int> criticalResources = new Dictionary<ThingDef, int>();
@@ -21,7 +22,7 @@ namespace ResourceAlert
 
         public Alert_LowResource()
         {
-            Log.Message("Low Resources contructor");
+            DebugLog.Message("Low Resources contructor");
             this.defaultLabel = "Deep_ResourceAlert_Alert_LowResource".Translate();
             this.defaultPriority = AlertPriority.Medium;
         }
@@ -37,15 +38,26 @@ namespace ResourceAlert
             return explaination;
         }
 
-        public override AlertReport GetReport()
+		private const int CheckInterval = 250;
+		private int lastCheckedTick = -CheckInterval;
+        private bool lastReport = false;
+        private string lastMap = null;
+
+		public override AlertReport GetReport()
         {
-            //TODO: Check the performance impact of this:
-            //if (Find.TickManager.TicksGame < 150000)
-            //{
-            //	return false;
-            //}
-            //Log.Message("Alert_LowResource get report");
-            return this.CheckMapResources(Find.CurrentMap) != null;
+			Map currentMap = Find.CurrentMap;
+			if (currentMap == null)
+				return false;
+
+			int ticksNow = Find.TickManager.TicksGame;
+            if (currentMap.GetUniqueLoadID() != lastMap ||
+				ticksNow - lastCheckedTick >= CheckInterval)
+            {
+                lastCheckedTick = ticksNow;
+				lastReport = CheckMapResources(currentMap) != null;
+				lastMap = currentMap.GetUniqueLoadID();
+			}
+            return lastReport;
         }
 
         private Map CheckMapResources(Map map)
@@ -67,13 +79,18 @@ namespace ResourceAlert
 
         private bool PopulateLowResources(Map map)
         {
-
             lowResources.Clear();
             lowCategories.Clear();
             // TODO: instead of clear, manage hashset by adding and removing
             bool foundLowResource = false;
-            // Log.Message("Alert_LowResource populate");
-            foreach (KeyValuePair<ThingDef, int> entry in alertableResources)
+			// DebugLog.Message("Alert_LowResource populate");
+
+			var resourceAlertMapComponent = Find.CurrentMap.GetComponent<ResourceAlertComponent>();
+
+            Dictionary<ThingDef, int> alertableResources = ResourceAlertManager.Resources;
+			Dictionary<ThingCategoryDef, int> alertableCategories = ResourceAlertManager.Categories;
+
+			foreach (KeyValuePair<ThingDef, int> entry in alertableResources)
             {
                 if (map.resourceCounter.GetCount(entry.Key) < entry.Value)
                 {
@@ -96,11 +113,17 @@ namespace ResourceAlert
             string lowResourcesString = "Deep_ResourceAlert_LowResourceDescGeneric".Translate();
             foreach (ThingDef resource in lowResources)
             {
-                lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() + map.resourceCounter.GetCount(resource) + "Deep_ResourceAlert_LowResourceDescDesired".Translate() + alertableResources.TryGetValue(resource);
+                lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() +
+                    map.resourceCounter.GetCount(resource) + 
+                    "Deep_ResourceAlert_LowResourceDescDesired".Translate() +
+                    ResourceAlertManager.Resources.TryGetValue(resource);
             }
             foreach (ThingCategoryDef resource in lowCategories)
             {
-                lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() + map.resourceCounter.GetCountIn(resource) + "Deep_ResourceAlert_LowResourceDescDesired".Translate() + alertableCategories.TryGetValue(resource);
+                lowResourcesString += "\n" + resource.LabelCap + "Deep_ResourceAlert_LowResourceDescAvailable".Translate() +
+                    map.resourceCounter.GetCountIn(resource) +
+                    "Deep_ResourceAlert_LowResourceDescDesired".Translate() +
+                    ResourceAlertManager.Categories.TryGetValue(resource);
             }
             return lowResourcesString;
         }
