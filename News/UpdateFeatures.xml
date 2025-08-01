@@ -5,6 +5,16 @@
 		<modIdentifier>DeepsResourceAlert</modIdentifier>
 		<linkUrl>https://ludeon.com/forums/index.php?topic=55408.0</linkUrl>
 	</HugsLib.UpdateFeatureDef>
+	
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+    <defName>DeepsResourceAlert_1_62</defName>
+    <assemblyVersion>1.6.2</assemblyVersion>
+    <content>
+        Default-map thresholds – apply your alert levels automatically to every new colony.
+        Multi-map tracking – monitor resource alerts across all active maps without switching.
+    </content>
+	</HugsLib.UpdateFeatureDef>
+
 	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
 		<defName>DeepsResourceAlert_1_61</defName>
 		<assemblyVersion>1.6.1</assemblyVersion>
