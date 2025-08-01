@@ -38,5 +38,20 @@ namespace ResourceAlert
 
 			DebugLog.Message($"Deep's Resource Alert: data loaded for map {map.GetUniqueLoadID()}.");
 		}
+
+		public override void MapGenerated()
+		{
+			base.MapGenerated();
+
+			if (Find.CurrentMap.IsPlayerHome)
+			{           
+				// copy defaults into the fresh dictionaries
+				foreach (var kv in ResourceAlertMod.Settings.defaultResourceThresholds)
+					alertableResources[kv.Key] = kv.Value;
+				foreach (var kv in ResourceAlertMod.Settings.defaultCategoryThresholds)
+					alertableCategories[kv.Key] = kv.Value;
+			}
+
+		}
 	}
 }

@@ -14,10 +14,10 @@ namespace ResourceAlert
 
 		// your existing dictionaries:
 		public static Dictionary<ThingDef, int> Resources =>
-			Comp.alertableResources;
+			Comp?.alertableResources;
 
 		public static Dictionary<ThingCategoryDef, int> Categories =>
-			Comp.alertableCategories;
+			Comp?.alertableCategories;
 
 		// in future, just add more:
 		// public static Dictionary<SomeKey, SomeValue> NewDict =>

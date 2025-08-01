@@ -3,11 +3,15 @@ using Verse;
 using System.Collections.Generic;
 using RimWorld;
 using Verse.Sound;
+using System.Resources;
 
 namespace ResourceAlert
 {
 	public class TrackedResourcesWindow : Window
 	{
+		private Dictionary<ThingDef, int> resourceDict;
+		private Dictionary<ThingCategoryDef, int> categoryDict;
+
 		public override Vector2 InitialSize => new Vector2(400f, 500f);
 
 		public TrackedResourcesWindow()
@@ -15,12 +19,16 @@ namespace ResourceAlert
 			doCloseX = true;
 			closeOnClickedOutside = true;
 			absorbInputAroundWindow = true;
+
+			resourceDict = ResourceAlertManager.Resources;
+			categoryDict = ResourceAlertManager.Categories;
 		}
+
 
 		public override void DoWindowContents(Rect inRect)
 		{
 			Text.Font = GameFont.Medium;
-			Widgets.Label(new Rect(0f, 0f, inRect.width, 30f), "Tracked Resources");
+			Widgets.Label(new Rect(0, 0, inRect.width, 30f), "Tracked Resources");
 			Text.Font = GameFont.Small;
 
 			float curY = 40f;
@@ -65,27 +73,24 @@ namespace ResourceAlert
 				}
 			}
 
-
 			if (Find.CurrentMap != null)
 			{
-				Dictionary<ThingDef, int> alertableResources = ResourceAlertManager.Resources;
-				Dictionary<ThingCategoryDef, int> alertableCategories = ResourceAlertManager.Categories;
-
 				// Resources
-				if (alertableResources.Count > 0)
+				if (resourceDict.Count > 0)
 				{
 					Widgets.Label(new Rect(10f, curY, 200f, 24f), "Resources:");
 					curY += 24f;
 				}
 
 				DrawTracked(
-					alertableResources,
+					resourceDict,
 					def => Find.WindowStack.Add(new SetResourcesWindow((ThingDef)(object)def)),
 					def => ResourceChecker.RemoveAlertableResource((ThingDef)(object)def)
 				);
 
+
 				// Categories
-				if (alertableCategories.Count > 0)
+				if (categoryDict.Count > 0)
 				{
 					curY += 10f;
 					Widgets.Label(new Rect(10f, curY, 200f, 24f), "Categories:");
@@ -93,10 +98,13 @@ namespace ResourceAlert
 				}
 
 				DrawTracked(
-					alertableCategories,
+					categoryDict,
 					def => Find.WindowStack.Add(new SetResourcesWindow((ThingCategoryDef)(object)def)),
 					def => ResourceChecker.RemoveAlertableCategory((ThingCategoryDef)(object)def)
 				);
+
+				float btnW = 120f, btnH = 30f;
+				var btnRect = new Rect((inRect.width - btnW) / 2, inRect.height - btnH - 10, btnW, btnH);
 			}
 			else
 			{
@@ -107,5 +115,6 @@ namespace ResourceAlert
 			if (Widgets.ButtonText(new Rect(inRect.width - 80f, inRect.height - 35f, 70f, 28f), "Close"))
 				Close();
 		}
+
 	}
 }
