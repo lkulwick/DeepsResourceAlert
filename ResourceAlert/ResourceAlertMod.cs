@@ -23,8 +23,6 @@ namespace ResourceAlert
 		public IDictionary<ThingDef, int> defaultResourceThresholds { get; private set; }
 		public IDictionary<ThingCategoryDef, int> defaultCategoryThresholds { get; private set; }
 
-		public bool exampleBool;
-
 		public DefaultAlertSettings()
 		{
 			// wire up the adapters, pointing at the raw dicts
@@ -41,8 +39,6 @@ namespace ResourceAlert
 			// persist only the raw, string-keyed versions
 			Scribe_Collections.Look(ref rawResourceThresholds, "defaultResourceThresholds", LookMode.Value, LookMode.Value);
 			Scribe_Collections.Look(ref rawCategoryThresholds, "defaultCategoryThresholds", LookMode.Value, LookMode.Value);
-
-			Scribe_Values.Look(ref exampleBool, "exampleBool");
 
 			DebugLog.Message($"loaded {rawResourceThresholds.Count} resource keys; {rawCategoryThresholds.Count} category keys.");
 
@@ -77,18 +73,13 @@ namespace ResourceAlert
 
 		public override string SettingsCategory()
 		{
-			return "Deep Resource Alert";
+			return "Resource Alert";
 		}
 
 		public override void DoSettingsWindowContents(Rect inRect)
 		{
 			var listing = new Listing_Standard();
 			listing.Begin(inRect);
-
-			// Your example toggle
-			listing.CheckboxLabeled("exampleBoolExplanation", ref Settings.exampleBool, "exampleBoolToolTip");
-
-			listing.Gap(12f);
 
 			// --- Section: list current default thresholds ---
 			listing.Label("Default Tracked Resources:");
