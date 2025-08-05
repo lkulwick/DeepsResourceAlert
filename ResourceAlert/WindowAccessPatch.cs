@@ -21,8 +21,11 @@ namespace ResourceAlert
         {
             private static void Clicker(TreeNode_ThingCategory thingCategory, Rect rect)
             {
-                if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
-                {
+				// grab the binding
+				if ((ResourceAlertKeyBindingDefOf.Deep_ResourceAlert_SetResource.KeyDownEvent
+					 || ResourceAlertKeyBindingDefOf.Deep_ResourceAlert_SetResource.IsDownEvent)
+					&& Widgets.ButtonInvisible(rect, true))
+				{
                     DebugLog.Message("new deep test inside category. Thingdef: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
                     if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
                     {
@@ -68,8 +71,10 @@ namespace ResourceAlert
         {
             private static void Clicker(ThingDef thingDef, Rect rect)
             {
-                if (Input.GetKey(KeyCode.LeftShift) && Widgets.ButtonInvisible(rect, true))
-                {
+				if ((ResourceAlertKeyBindingDefOf.Deep_ResourceAlert_SetResource.KeyDownEvent
+					 || ResourceAlertKeyBindingDefOf.Deep_ResourceAlert_SetResource.IsDownEvent)
+					&& Widgets.ButtonInvisible(rect, true))
+					{
                     DebugLog.Message("new deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
                     if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
                     {

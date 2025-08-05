@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Alert_LowResource.cs" />
     <Compile Include="DebugLog.cs" />
+    <Compile Include="ResourceAlertKeyBindingDefOf.cs" />
     <Compile Include="ResourceAlertManager.cs" />
     <Compile Include="ResourceAlertMod.cs" />
     <Compile Include="ResourceAlertComponent.cs" />

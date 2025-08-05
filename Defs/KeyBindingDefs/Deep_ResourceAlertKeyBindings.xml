@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <KeyBindingCategoryDef>
+    <defName>Deep_ResourceAlert_Category</defName>
+    <label>Resource Alert</label>
+  </KeyBindingCategoryDef>
+
+  <KeyBindingDef>
+    <defName>Deep_ResourceAlert_SetResource</defName>
+    <label>Set resource (this hotkey + click on ResourceReadout)</label>
+    <category>Deep_ResourceAlert_Category</category>
+    <defaultKeyCodeA>LeftShift</defaultKeyCodeA>
+  </KeyBindingDef>
+</Defs>
