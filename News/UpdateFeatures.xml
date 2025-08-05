@@ -5,6 +5,14 @@
 		<modIdentifier>DeepsResourceAlert</modIdentifier>
 		<linkUrl>https://ludeon.com/forums/index.php?topic=55408.0</linkUrl>
 	</HugsLib.UpdateFeatureDef>
+
+	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
+    <defName>DeepsResourceAlert_1_63</defName>
+    <assemblyVersion>1.6.3</assemblyVersion>
+    <content>
+        Added configurable hotkey support.
+    </content>
+	</HugsLib.UpdateFeatureDef>
 	
 	<HugsLib.UpdateFeatureDef ParentName="UpdateFeatureBase">
     <defName>DeepsResourceAlert_1_62</defName>
