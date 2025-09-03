@@ -83,6 +83,7 @@
     <Compile Include="HarmonyPatches.cs" />
     <Compile Include="ResourceChecker.cs" />
     <Compile Include="SetResourcesWindow.cs" />
+    <Compile Include="ToggleableReadoutsCompat.cs" />
     <Compile Include="TrackedResourcesWindow.cs" />
     <Compile Include="WindowAccessPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
