@@ -1,124 +1,164 @@
-﻿using System;
+﻿// WindowAccessPatch.cs (safer transpilers)
+// Replaces fragile Ldloc_* assumptions with rect-load cloning around GUI.DrawTexture.
+// Comments in English.
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
-using Verse.Sound;
 
 namespace ResourceAlert
 {
-    public static class ResourceRightClick
-    {
-        public static bool open = true;
-        public static List<Def> PinnedDefCache = new List<Def>();
-        private static string pintrans = Translator.Translate("PinnedRes");
-        [HarmonyPatch(typeof(Listing_ResourceReadout), "DoCategory")]
-        public static class Patch_DoCategory
-        {
-            private static void Clicker(TreeNode_ThingCategory thingCategory, Rect rect)
-            {
-				// grab the binding
+	public static class ResourceRightClick
+	{
+		public static bool open = true;
+		public static List<Def> PinnedDefCache = new List<Def>();
+		private static readonly string pintrans = Translator.Translate("PinnedRes");
+
+		// ------------------------------
+		// DoCategory: open SetResourcesWindow for a ThingCategory on hotkey + click
+		// ------------------------------
+		// --- inside ResourceRightClick ---
+
+		[HarmonyPatch(typeof(Listing_ResourceReadout), "DoCategory")]
+		public static class Patch_DoCategory_Safer
+		{
+			private static readonly MethodInfo DrawTextureMI = AccessTools.Method(
+				typeof(GUI), nameof(GUI.DrawTexture), new[] { typeof(Rect), typeof(Texture) });
+
+			private static readonly MethodInfo ClickerMI = AccessTools.Method(
+				typeof(Patch_DoCategory_Safer), nameof(Clicker));
+
+			// Called when user holds our keybinding and clicks the row rect
+			private static void Clicker(TreeNode_ThingCategory node, Rect rect)
+			{
 				if ((ResourceAlertKeyBindingDefOf.Deep_ResourceAlert_SetResource.KeyDownEvent
 					 || ResourceAlertKeyBindingDefOf.Deep_ResourceAlert_SetResource.IsDownEvent)
 					&& Widgets.ButtonInvisible(rect, true))
 				{
-                    DebugLog.Message("new deep test inside category. Thingdef: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
-                    if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
-                    {
-                        DebugLog.Message("category windowstack add: " + thingCategory.catDef.defName + "Rect: " + rect.ToString());
-                        Find.WindowStack.Add(new SetResourcesWindow(thingCategory.catDef));
-                    }
-                }
-            }
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                bool found = false;
-                foreach (CodeInstruction instruction in instructions)
-                {
-                    if (!found && instruction.Calls(ResourceRightClick.Patch_DoCategory.DrawTexture))
-                    {
-                        found = true;
-                        yield return new CodeInstruction(OpCodes.Ldarg_1, null);
-                        yield return new CodeInstruction(OpCodes.Ldloc_2, null);
-                        yield return new CodeInstruction(OpCodes.Call, ResourceRightClick.Patch_DoCategory.m_Clicker);
-                        yield return instruction;
-                    }
-                    else
-                    {
-                        yield return instruction;
-                    }
-                }
-                if (!found)
-                {
-                    Log.Warning("Patch_DoCategory Instruction not found");
-                }
-                yield break;
-            }
-            private static MethodInfo m_Clicker = AccessTools.Method(typeof(ResourceRightClick.Patch_DoCategory), "Clicker", null, null);
-            private static MethodInfo DrawTexture = AccessTools.Method(typeof(GUI), "DrawTexture", new Type[]
-            {
-                typeof(Rect),
-                typeof(Texture)
-            }, null);
-        }
+					DebugLog.Message($"[ResourceAlert] Category click: {node.catDef.defName} rect={rect}");
+					if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
+					{
+						DebugLog.Message($"[ResourceAlert] Opening SetResourcesWindow for category {node.catDef.defName}");
+						Find.WindowStack.Add(new SetResourcesWindow(node.catDef));
+					}
+				}
+			}
 
-        [HarmonyPatch(typeof(Listing_ResourceReadout), "DoThingDef")]
-        public static class Patch_DoThingDef
-        {
-            private static void Clicker(ThingDef thingDef, Rect rect)
-            {
+			/// <summary>
+			/// Robust IL: save original arguments to locals, invoke Clicker(node, rect), then restore args for DrawTexture.
+			/// This avoids cloning any possibly by-ref or instance-producing instruction sequences.
+			/// </summary>
+			[HarmonyTranspiler]
+			[HarmonyPriority(Priority.VeryLow)]
+			private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+			{
+				var code = new List<CodeInstruction>(instructions);
+
+				// Declare locals: Texture tempTex; Rect tempRect;
+				LocalBuilder texLocal = generator.DeclareLocal(typeof(Texture));  // ref type
+				LocalBuilder rectLocal = generator.DeclareLocal(typeof(Rect));    // value type
+
+				bool injected = false;
+				for (int i = 0; i < code.Count; i++)
+				{
+					var ci = code[i];
+
+					if (ci.Calls(DrawTextureMI))
+					{
+						// At this point the stack is [..., rect, texture] for the DrawTexture call.
+						// We insert before the call:
+						//   stloc.s tempTex
+						//   stloc.s tempRect
+						//   ldarg.1                      // node
+						//   ldloc.s tempRect             // rect
+						//   call Clicker
+						//   ldloc.s tempRect             // rect
+						//   ldloc.s tempTex              // texture
+						yield return new CodeInstruction(OpCodes.Stloc_S, texLocal);
+						yield return new CodeInstruction(OpCodes.Stloc_S, rectLocal);
+						yield return new CodeInstruction(OpCodes.Ldarg_1);
+						yield return new CodeInstruction(OpCodes.Ldloc_S, rectLocal);
+						yield return new CodeInstruction(OpCodes.Call, ClickerMI);
+						yield return new CodeInstruction(OpCodes.Ldloc_S, rectLocal);
+						yield return new CodeInstruction(OpCodes.Ldloc_S, texLocal);
+
+						injected = true;
+					}
+
+					// Emit original instruction (including the call)
+					yield return ci;
+				}
+
+				if (!injected)
+					Log.Warning("[ResourceAlert] Patch_DoCategory_Safer: DrawTexture call not found; no injection performed.");
+			}
+		}
+
+		// ---------------------------------------------
+
+		[HarmonyPatch(typeof(Listing_ResourceReadout), "DoThingDef")]
+		public static class Patch_DoThingDef_Safer
+		{
+			private static readonly MethodInfo DrawTextureMI = AccessTools.Method(
+				typeof(GUI), nameof(GUI.DrawTexture), new[] { typeof(Rect), typeof(Texture) });
+
+			private static readonly MethodInfo ClickerMI = AccessTools.Method(
+				typeof(Patch_DoThingDef_Safer), nameof(Clicker));
+
+			private static void Clicker(ThingDef thingDef, Rect rect)
+			{
 				if ((ResourceAlertKeyBindingDefOf.Deep_ResourceAlert_SetResource.KeyDownEvent
 					 || ResourceAlertKeyBindingDefOf.Deep_ResourceAlert_SetResource.IsDownEvent)
 					&& Widgets.ButtonInvisible(rect, true))
+				{
+					DebugLog.Message($"[ResourceAlert] ThingDef click: {thingDef.defName} rect={rect}");
+					if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
 					{
-                    DebugLog.Message("new deep test inside. Thingdef: " + thingDef.defName + "Rect: " + rect.ToString());
-                    if (!Find.WindowStack.TryRemove(typeof(SetResourcesWindow), true))
-                    {
-                        DebugLog.Message("windowstack add: " + thingDef.defName + "Rect: " + rect.ToString());
-                        Find.WindowStack.Add(new SetResourcesWindow(thingDef));
-                    }
-                }
-            }
+						DebugLog.Message($"[ResourceAlert] Opening SetResourcesWindow for def {thingDef.defName}");
+						Find.WindowStack.Add(new SetResourcesWindow(thingDef));
+					}
+				}
+			}
 
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                bool found = false;
-                foreach (CodeInstruction codeInstruction in instructions)
-                {
-                    if (codeInstruction.Calls(ResourceRightClick.Patch_DoThingDef.DrawTexture))
-                    {
-                        found = true;
-                        yield return codeInstruction;
-                        yield return new CodeInstruction(OpCodes.Ldarg_1, null);
-                        yield return new CodeInstruction(OpCodes.Ldloc_2, null);
-                        yield return new CodeInstruction(OpCodes.Call, ResourceRightClick.Patch_DoThingDef.m_Clicker);
-                    }
-                    else
-                    {
-                        yield return codeInstruction;
-                    }
-                }
-                //				IEnumerator<CodeInstruction> enumerator = null;
-                if (!found)
-                {
-                    Log.Warning("Patch_DoThingDef Instruction not found");
-                }
-                yield break;
-            }
+			[HarmonyTranspiler]
+			[HarmonyPriority(Priority.VeryLow)]
+			private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+			{
+				var code = new List<CodeInstruction>(instructions);
 
-            // Token: 0x040001C2 RID: 450
-            private static MethodInfo DrawTexture = AccessTools.Method(typeof(GUI), "DrawTexture", new Type[]
-            {
-                typeof(Rect),
-                typeof(Texture)
-            }, null);
+				LocalBuilder texLocal = generator.DeclareLocal(typeof(Texture));
+				LocalBuilder rectLocal = generator.DeclareLocal(typeof(Rect));
 
-            // Token: 0x040001C3 RID: 451
-            private static MethodInfo m_Clicker = AccessTools.Method(typeof(ResourceRightClick.Patch_DoThingDef), "Clicker", null, null);
-        }
-    }
+				bool injected = false;
+				for (int i = 0; i < code.Count; i++)
+				{
+					var ci = code[i];
+
+					if (ci.Calls(DrawTextureMI))
+					{
+						// Stack before call: [..., rect, texture]
+						yield return new CodeInstruction(OpCodes.Stloc_S, texLocal);
+						yield return new CodeInstruction(OpCodes.Stloc_S, rectLocal);
+						yield return new CodeInstruction(OpCodes.Ldarg_1);              // thingDef
+						yield return new CodeInstruction(OpCodes.Ldloc_S, rectLocal);   // rect
+						yield return new CodeInstruction(OpCodes.Call, ClickerMI);
+						yield return new CodeInstruction(OpCodes.Ldloc_S, rectLocal);   // rect
+						yield return new CodeInstruction(OpCodes.Ldloc_S, texLocal);    // texture
+
+						injected = true;
+					}
+
+					yield return ci;
+				}
+
+				if (!injected)
+					Log.Warning("[ResourceAlert] Patch_DoThingDef_Safer: DrawTexture call not found; no injection performed.");
+			}
+		}
+	}
 }
