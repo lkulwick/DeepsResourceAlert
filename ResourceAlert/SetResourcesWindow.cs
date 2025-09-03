@@ -101,8 +101,14 @@ namespace ResourceAlert
             float curY = 0f;
             float spacing = 10f;
 
-            // --- "Track resource:" title ---
-            Text.Font = GameFont.Medium;
+			bool enterPressed = 
+                KeyBindingDefOf.Accept.KeyDownEvent || 
+                (Event.current.type == EventType.KeyDown &&
+                (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter));
+
+
+			// --- "Track resource:" title ---
+			Text.Font = GameFont.Medium;
             string prefix = "Track resource:";
             Vector2 prefixSize = Text.CalcSize(prefix);
 
@@ -116,8 +122,9 @@ namespace ResourceAlert
             Rect prefixRect = new Rect(x, 0f + centerY - prefixSize.y / 2f, prefixSize.x, prefixSize.y);
             Rect iconRect = new Rect(prefixRect.xMax + 6f, 0f + centerY - iconSize / 2f, iconSize, iconSize);
 
-            // Draw prefix and icon
-            Widgets.Label(prefixRect, prefix);
+
+			// Draw prefix and icon
+			Widgets.Label(prefixRect, prefix);
             GUI.DrawTexture(iconRect, iconTex);
 
             // Tooltip with full name
@@ -153,14 +160,16 @@ namespace ResourceAlert
             Rect buttonRect = new Rect(15f, curY, controlWidth, buttonHeight);
             bool pressed = Widgets.ButtonText(buttonRect, "Track");
 
-            if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return)
-            {
-                Event.current.Use();
-                pressed = true;
-            }
+			// If the text field is focused, we still want Enter to trigger Track.
+			if (enterPressed)
+			{
+				// Consume the event so it doesn't bubble or trigger other windows.
+				Event.current.Use();
+				pressed = true;
+			}
 
 
-            if (pressed)
+			if (pressed)
             {
                 AcceptanceReport acceptanceReport = ValueIsValid(curLimit);
                 if (!acceptanceReport.Accepted)
@@ -229,9 +238,7 @@ namespace ResourceAlert
             }
         }
 
-
-
-        protected string curLimit = "0";
+		protected string curLimit = "0";
         private bool focused_TextResourceLimitTextField;
         private int startAcceptingInputAtFrame;
         private ThingDef alertableResource;
